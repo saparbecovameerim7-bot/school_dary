@@ -1,1 +1,1 @@
-web: gunicorn AUZ.wsgi
+ gunicorn AUZ.wsgi:application --bind 0.0.0.0:$PORT
