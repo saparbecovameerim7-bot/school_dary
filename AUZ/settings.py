@@ -105,12 +105,10 @@ WSGI_APPLICATION = 'AUZ.wsgi.application'
 # }
 
 DATABASE = {
-    'default': dj_database_url.config(
-        default=f"sqlite:///{BASE_DIR / 'db.sqlite'}",
-        conn_max_age=500
-    )
-    
-    
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
 }
 
 
