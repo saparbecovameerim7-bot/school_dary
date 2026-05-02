@@ -149,7 +149,6 @@ USE_TZ = True
 STATIC_URL = 'static/'
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
-    "https://schooldiaryw.netlify.app",
 ]
 
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
