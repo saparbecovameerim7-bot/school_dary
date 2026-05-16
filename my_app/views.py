@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.contrib.auth.hashers import make_password, check_password
+from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 from .models import *
 from .serializers import UserSerializer
@@ -69,38 +70,29 @@ class RegistraionAPIView(APIView):
 
 class LoginAPIView(APIView):
     def post(self, request):
-        email = request.data.get('email')
+        username = request.data.get('username')
         password = request.data.get('password')
-        
-        if not email or not password:
-            return Response(
-                {'message': 'Нужен и email, и пароль'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        
-        user = Users.objects.filter(email=email).first()
-        if not user:
-            return Response(
-                {'message': 'Пользователь не найден'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        
-        print(f"Попытка логина: {request.data}")
 
-        if not check_password(password, user.password):
+        if not username or not password:
             return Response(
-                {'message': 'Неверный email или пароль'},
-                status=status.HTTP_401_UNAUTHORIZED
+                {'message': 'Нужны username и password'},
+                status=status.HTTP_400_BAD_REQUEST
             )
-        
+
+        user = authenticate(username=username, password=password)
+
+        if user is None:
+            return Response(
+                {'message': 'Неверный логин или пароль'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
         refresh = RefreshToken.for_user(user)
 
         return Response({
-            "message": "Успешный вход",
             "access_token": str(refresh.access_token),
-            "refresh_token": str(refresh)
-        })
+            "refresh_token": str(refresh),
+        }, status=status.HTTP_200_OK)
 
 class GetInfoUser(APIView):
     permission_classes = [IsAuthenticated]
